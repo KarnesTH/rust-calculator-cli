@@ -1,3 +1,30 @@
+/// Parses user input into two numbers and an operator.
+///
+/// # Arguments
+/// * `input` - A string slice containing the input to be parsed
+///
+/// # Returns
+/// * `Result<(f64, f64, &str), Box<dyn std::error::Error>>` - A tuple containing:
+///   - first number (f64)
+///   - second number (f64)
+///   - operator (&str)
+///
+/// # Errors
+/// Returns an error if:
+/// * The input doesn't contain exactly 3 parts (two numbers and an operator)
+/// * The numbers cannot be converted to f64
+/// * The operator is not one of the allowed operators (+, -, *, /)
+///
+/// # Examples
+/// ```
+/// let input = "5.5 + 3.2";
+/// let result = parse_input(input);
+/// assert!(result.is_ok());
+/// let (num1, num2, op) = result.unwrap();
+/// assert_eq!(num1, 5.5);
+/// assert_eq!(num2, 3.2);
+/// assert_eq!(op, "+");
+/// ```
 fn parse_input(input: &str) -> Result<(f64, f64, &str), Box<dyn std::error::Error>> {
     let values: Vec<&str> = input.split_whitespace().collect();
 
@@ -16,6 +43,35 @@ fn parse_input(input: &str) -> Result<(f64, f64, &str), Box<dyn std::error::Erro
     Ok((num1, num2, operator))
 }
 
+/// Performs a mathematical calculation with two numbers and an operator.
+///
+/// # Arguments
+/// * `num1` - First number (f64)
+/// * `num2` - Second number (f64)
+/// * `operator` - Mathematical operator as string slice
+///
+/// # Returns
+/// * `Result<f64, Box<dyn std::error::Error>>` - The result of the calculation
+///
+/// # Supported Operators
+/// * `+` - Addition
+/// * `-` - Subtraction
+/// * `*` - Multiplication
+/// * `/` - Division
+///
+/// # Errors
+/// Returns an error if:
+/// * Division by zero is attempted
+/// * An unsupported operator is used
+///
+/// # Examples
+/// ```
+/// let result = calculate(10.0, 5.0, "+");
+/// assert_eq!(result.unwrap(), 15.0);
+///
+/// let divide_by_zero = calculate(5.0, 0.0, "/");
+/// assert!(divide_by_zero.is_err());
+/// ```
 fn calculate(num1: f64, num2: f64, operator: &str) -> Result<f64, Box<dyn std::error::Error>> {
     match operator {
         "+" => Ok(num1 + num2),
@@ -32,6 +88,29 @@ fn calculate(num1: f64, num2: f64, operator: &str) -> Result<f64, Box<dyn std::e
     }
 }
 
+/// Entry point of the calculator application.
+///
+/// This function runs an interactive command-line calculator that:
+/// - Continuously prompts for user input
+/// - Processes mathematical expressions
+/// - Handles errors gracefully
+/// - Allows clean program termination
+///
+/// # Usage
+/// The program accepts input in the format: "number operator number"
+/// - Valid operators: +, -, *, /
+/// - Numbers can be integers or floating-point
+/// - Enter 'q' to quit the program
+///
+/// # Returns
+/// * `Result<(), Box<dyn std::error::Error>>` - Ok(()) on successful execution
+///
+/// # Examples
+/// ```text
+/// Please enter your calculation (e.g. 5 + 5) or 'q' to quit:
+/// 5 + 5
+/// 5 + 5 = 10
+/// ```
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     loop {
         println!("Please enter your calculation (e.g. 5 + 5) or 'q' to quit:");
